@@ -240,8 +240,6 @@ void Player::placeBlock(const Vec3 &cameraPos, const Vec3 &dir) {
     HitBlock* hit = std::get_if<HitBlock>(&*result);
     if (!hit) return;
 
-    Debug::printVec3(hit->position);
-
 	Block hitBlock = hit->chunk->blocks[(int)hit->position.x][(int)hit->position.y][(int)hit->position.z];
 
     Block newObject = hitBlock;
