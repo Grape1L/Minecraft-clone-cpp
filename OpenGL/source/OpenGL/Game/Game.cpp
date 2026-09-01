@@ -29,32 +29,6 @@
 
 #include <OpenGL/Blocks/Block.h>
 
-/* 
-WHAT TO ADD: (4/10/2025 3:35am)F
-1. top and bottom textures | done
-2. render only textures player sees
-3. prevent texutres "stacking" on top of each other | done
-4. make better m_camera initialization
-5. make fullscreen option
-i can make pointers to dipslaySize
-make it so that fps doesnt affect movement
-*/
-
-/*
-WHAT TO ADD: (3/04/2026 2:11am)
-1. Add texture atlas and different blocks
-2. Make initial packet receival (allChunks) better, so that it doesnt get mixed with the other data the server sends (IMPORTANT!!!)
-3. Add a whole body skin (later)
-
-14/04.2026 12:02am:
-VERY VERY VERY IMPORTANT!!!!!!!!!!!!
-Make reliable udp packets for actions (not for player)
-*/
-
-/*
-30.04.2026 12:32PM:
-Create a separate graphic rendering thread and make the other stuff follow the tickrate except of course the math and rendering
-*/
 
 struct UniformData {
     Mat4 world;
@@ -156,7 +130,7 @@ void Game::onCreate() {
     m_shader->setUniformBufferSlot("UniformData", 0);
 
 
-    // --------------------World generation
+    // World generation
 
     // Single player world generation
      m_worldGen->generateFlatWorld(*m_world);
@@ -178,7 +152,7 @@ void Game::onCreate() {
     //}
     //m_world->allChunks = initialData.value().allChunks;
 
-    // --------------------World generation
+    // World generation
 
 
     // Server
@@ -187,8 +161,6 @@ void Game::onCreate() {
             std::optional<Packet> receivedPacket = std::nullopt;
             receivedPacket = m_client->recvPacket();
             if (receivedPacket == std::nullopt) continue;
-
-            //std::cout << receivedPacket->senderID << "\n";
 
             if (receivedPacket.value().packetType == PacketType::PACKET_PLAYER_STATE) {
                 PlayerData* playerData = std::get_if<PlayerData>(&receivedPacket.value().packet);
@@ -206,7 +178,7 @@ void Game::onCreate() {
                 if (action->actionType == ActionType::BreakBlock || action->actionType == ActionType::PlaceBlock) {
                     BlockAction* blockAction = std::get_if<BlockAction>(&action->data);
 
-                    allChunksType::iterator it = m_world->allChunks.find(blockAction->chunkPos); // oj tutaj mocno zjebalem, trzeba bedzie zrobic tak zeby sendowalo z akcji index chunku z allChunks bo to inaczej sie rozjebie w huj
+                    allChunksType::iterator it = m_world->allChunks.find(blockAction->chunkPos);
                     if (it == m_world->allChunks.end()) {
                         return;
                     }
@@ -217,14 +189,13 @@ void Game::onCreate() {
                     }
                     else if (blockAction->actionType == ActionType::PlaceBlock) {
 
-                        //if (!m_player->isPlayerOccupyingBlock(actionHeader->position, actionHeader->chunkPos)) { // idk mby ill delete it???
-                        chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = blockAction->blockType; // make it so if an object is already there it doesnt place it
+                        chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = blockAction->blockType;
                     }
 
                     
                 }
 
-                else if (action->actionType == ActionType::DamagePlayer) { // later do it so that the server stores all players' health and deciedes when they die
+                else if (action->actionType == ActionType::DamagePlayer) {
                     DamageAction* damageAction = std::get_if<DamageAction>(&action->data);
                     m_player->playerHealth -= damageAction->damage;
 
@@ -244,19 +215,16 @@ void Game::onCreate() {
     receiveThread.detach();
     // Server
 
-    //TEXTURES//
+    //TEXTURES
     grassBlockTexture.loadTexture("Textures/GrassBlock/grass_block_atlas.png");
     grassBlockTexture.genTexture();
 
 	stoneBlockTexture.loadTexture("Textures/StoneBlock/stone_block_atlas.png");
     stoneBlockTexture.genTexture();
 
-	rosieBlockTexture.loadTexture("Textures/RozaBlock/roza_block_atlas.png");
-	rosieBlockTexture.genTexture();
-
     playerTexture.loadTexture("Textures/OgorekAtlas/atlas.png");
     playerTexture.genTexture();
-    //TEXTURES//
+    //TEXTURES
 }
 
 
@@ -366,10 +334,6 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
 
 // Rendering Players
 
-
-// drawing UI?
-
-// drawing UI?
 
 
     m_display->present(false);
