@@ -21,8 +21,8 @@ Player::Player(Client& _client, World& _world, AllPlayersDataType& _allPlayersDa
 
     camera->y = 3;
 
-    camera->x = world.worldSize / 2;
-    camera->z = world.worldSize / 2;
+    camera->x = (world.worldSize * 16) / 2;
+    camera->z = (world.worldSize * 16) / 2;
 
     
     m_inventory->addItemToInventory(ItemStack{ BlockType::Grass, 1 }, 0);
