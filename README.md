@@ -11,6 +11,9 @@ This project is not perfect because it's my first big 3D game project, however i
     - Server controls the world, all of the players and the physics:
           Right now the server is just a relay between all of the players, the world may be different for every player initially.
           
+    - Item database:
+          Make an item database which stores the items category (blocks, tool, weapon, etc.), durability and other properties different for each category.
+          
     - Refactor the code and make it cleaner especially in Player.cpp, Game.cpp
     - Create a UI
     - Chunk meshing
@@ -18,6 +21,4 @@ This project is not perfect because it's my first big 3D game project, however i
     - Tools (pickaxe, axe, etc.)
     - Make each block have a different time to break
     - Entity system and add non-player entities
-    
-    - Item database:
-          Make an item database which stores the items category (blocks, tool, weapon, etc.), durability and other properties different for each category.
+    - Make one .png atlas for all the blocks instead of one atlas per block
