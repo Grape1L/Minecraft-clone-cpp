@@ -95,7 +95,7 @@ void Player::onUpdate(Mat4 &view, std::chrono::duration<float> deltaTime, bool f
     camera->mouseInput(0.2f, displaySize.width, displaySize.height);
 
     if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
-        if (Bplace / 60 == 1) {
+        if (Bplace == 60) {
             placeBlock(camera->getDataXYZ(), front);
         }
         Bplace -= 1;
@@ -109,7 +109,7 @@ void Player::onUpdate(Mat4 &view, std::chrono::duration<float> deltaTime, bool f
     }
 
     if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-        if (Bbreak / 60 == 1) {
+        if (Bbreak == 60) {
             handleLeftClick(front);
         }
         Bbreak -= 1;
