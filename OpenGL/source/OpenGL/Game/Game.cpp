@@ -290,9 +290,6 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
                         case BlockType::Stone:
                             stoneBlockTexture.bindTexture();
                             break;
-                        case BlockType::RosieBlock:
-                            rosieBlockTexture.bindTexture();
-                            break;
                     }
 
                     Vec3 realPos = Vec3(x + chunk->chunkPos.x, y, z + chunk->chunkPos.y);
