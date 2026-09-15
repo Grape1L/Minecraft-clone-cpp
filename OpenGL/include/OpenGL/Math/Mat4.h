@@ -3,7 +3,7 @@
 #include <cstring>
 #include <OpenGL/Math/Vec3.h>
 #include <cmath>
-#include <OpenGL/MiscStuff.h>
+#include <OpenGL/Prerequisites.h>
 
 class Mat4 {
 public:
