@@ -184,15 +184,9 @@ void Game::onCreate() {
                     if (blockAction->actionType == ActionType::BreakBlock) {
                         chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType == BlockType::Air;
                     }
+                    else if (blockAction->actionType == ActionType::PlaceBlock) {
                         chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = blockAction->blockType;
                     }
-
-                    
-                }
-
-                    }
-
-                    
                 }
 
                 else if (action->actionType == ActionType::DamagePlayer) {
