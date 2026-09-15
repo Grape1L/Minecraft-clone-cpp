@@ -2,7 +2,7 @@
 
 #include <OpenGL/Math/Vec4.h>
 #include <OpenGL/Math/Rect.h>
-#include <OpenGL/MiscStuff.h>
+#include <OpenGL/Prerequisites.h>
 #include <chrono>
 
 class GraphicsEngine {

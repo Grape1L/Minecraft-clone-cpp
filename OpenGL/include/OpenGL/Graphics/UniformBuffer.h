@@ -1,6 +1,6 @@
 #pragma once
 
-#include <OpenGL/MiscStuff.h>
+#include <OpenGL/Prerequisites.h>
 
 class UniformBuffer {
 public:
