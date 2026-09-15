@@ -21,8 +21,8 @@ Player::Player(Client& _client, World& _world, AllPlayersDataType& _allPlayersDa
 
     camera->y = 3;
 
-    camera->x = world.worldSize / 2;
-    camera->z = world.worldSize / 2;
+    camera->x = (world.worldSize * 16) / 2;
+    camera->z = (world.worldSize * 16) / 2;
 
     
     m_inventory->addItemToInventory(ItemStack{ BlockType::Grass, 1 }, 0);
@@ -96,7 +96,7 @@ void Player::onUpdate(Mat4 &view, std::chrono::duration<float> deltaTime, bool f
     camera->mouseInput(0.2f, displaySize.width, displaySize.height);
 
     if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
-        if (Bplace / 60 == 1) {
+        if (Bplace == 60) {
             placeBlock(camera->getDataXYZ(), front);
         }
         Bplace -= 1;
@@ -110,7 +110,7 @@ void Player::onUpdate(Mat4 &view, std::chrono::duration<float> deltaTime, bool f
     }
 
     if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-        if (Bbreak / 60 == 1) {
+        if (Bbreak == 60) {
             handleLeftClick(front);
         }
         Bbreak -= 1;
@@ -240,8 +240,6 @@ void Player::placeBlock(const Vec3 &cameraPos, const Vec3 &dir) {
 
     HitBlock* hit = std::get_if<HitBlock>(&*result);
     if (!hit) return;
-
-    Debug::printVec3(hit->position);
 
 	Block hitBlock = hit->chunk->blocks[(int)hit->position.x][(int)hit->position.y][(int)hit->position.z];
 
