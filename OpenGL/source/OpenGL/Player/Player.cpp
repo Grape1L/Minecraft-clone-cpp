@@ -67,13 +67,14 @@ void Player::onUpdate(Mat4 &view, std::chrono::duration<float> deltaTime, bool f
     };
 
     
-    if (m_client.piggyAckPackets.size() != 0) {
+    if (!m_client.piggyAckPackets.empty()) {
         m_client.sendPacket(
             Packet{
-                0, PacketType::PACKET_PLAYER_STATE, playerData, m_client.piggyAckPackets[0]
+                0, PacketType::PACKET_PLAYER_STATE, playerData, m_client.piggyAckPackets.front()
             }
         );
-        m_client.piggyAckPackets.erase(m_client.piggyAckPackets.begin());
+        m_client.piggyAckPackets.pop();
+        
     }
     else {
         m_client.sendPacket(
