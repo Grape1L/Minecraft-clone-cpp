@@ -184,8 +184,12 @@ void Game::onCreate() {
                     if (blockAction->actionType == ActionType::BreakBlock) {
                         chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType == BlockType::Air;
                     }
-                    else if (blockAction->actionType == ActionType::PlaceBlock) {
                         chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = blockAction->blockType;
+                    }
+
+                    
+                }
+
                     }
 
                     
@@ -211,7 +215,7 @@ void Game::onCreate() {
     receiveThread.detach();
     // Server
 
-    //TEXTURES//
+    //TEXTURES
     grassBlockTexture.loadTexture("Textures/GrassBlock/grass_block_atlas.png");
     grassBlockTexture.genTexture();
 
@@ -220,7 +224,7 @@ void Game::onCreate() {
 
     playerTexture.loadTexture("Textures/OgorekAtlas/atlas.png");
     playerTexture.genTexture();
-    //TEXTURES//
+    //TEXTURES
 }
 
 
@@ -318,14 +322,12 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
         data = { model, projection, view };
         m_uniform->setData(&data);
 
-        m_graphicsEngine->drawIndexedTriangles(TriangleType::TriangleList, 36);
-    }
 
-// Rendering Players
+// drawing UI?
 
+// drawing UI?
 
-    m_display->present(false);
 }
-
-void Game::onQuit() {
+EntitySystem* Game::getEntitySystem() {
+    return m_entitySystem.get();
 }
