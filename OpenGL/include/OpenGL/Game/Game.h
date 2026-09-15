@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chrono>
-#include <OpenGL/MiscStuff.h>
+#include <OpenGL/Prerequisites.h>
 #include <OpenGL/Camera/Camera.h>
 #include <vector>
 #include <OpenGL/Player/Player.h>
@@ -15,7 +15,6 @@
 
 class Window;
 class GraphicsEngine;
-class EntitySystem;
 class Chunk;
 
 class Camera;
@@ -43,7 +42,6 @@ protected:
     bool running = true;
     std::unique_ptr<Window> m_display;
     std::unique_ptr<GraphicsEngine> m_graphicsEngine;
-    std::unique_ptr<EntitySystem> m_entitySystem;
 
 
     std::unique_ptr<Player> m_player;
