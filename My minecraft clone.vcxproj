@@ -20,8 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game\main.cpp" />
-    <ClCompile Include="Minecraft clone server\main.cpp" />
-    <ClCompile Include="Minecraft clone server\Server\Server.cpp" />
     <ClCompile Include="OpenGL\glad\src\glad.c" />
     <ClCompile Include="OpenGL\glad\src\glad_wgl.c" />
     <ClCompile Include="OpenGL\source\OpenGL\Camera\Camera.cpp" />
@@ -43,17 +41,6 @@
     <ClCompile Include="OpenGL\stb\source\stb.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Minecraft clone server\Misc\AckPacket.h" />
-    <ClInclude Include="Minecraft clone server\Misc\ActionHeader.h" />
-    <ClInclude Include="Minecraft clone server\Misc\DataHeader.h" />
-    <ClInclude Include="Minecraft clone server\Misc\InitialData.h" />
-    <ClInclude Include="Minecraft clone server\Misc\Packet.h" />
-    <ClInclude Include="Minecraft clone server\Misc\PacketTypes.h" />
-    <ClInclude Include="Minecraft clone server\Misc\PlayerData.h" />
-    <ClInclude Include="Minecraft clone server\Server\Deserializer\Deserializer.h" />
-    <ClInclude Include="Minecraft clone server\Server\Misc\ReceivedPacket.h" />
-    <ClInclude Include="Minecraft clone server\Server\Serializer\Serializer.h" />
-    <ClInclude Include="Minecraft clone server\Server\Server.h" />
     <ClInclude Include="OpenGL\glad\include\glad\glad.h" />
     <ClInclude Include="OpenGL\glad\include\glad\glad_wgl.h" />
     <ClInclude Include="OpenGL\glad\include\KHR\khrplatform.h" />

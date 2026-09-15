@@ -3,7 +3,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="../Minecraft clone server/Minecraft clone server.vcxproj" Id="1a91038a-74d3-4533-a264-ba4ceab2a8e9" />
   <Project Path="Minecraft clone server/Minecraft Clone Server project/Minecraft Clone Server project.vcxproj" Id="d1972698-d07c-4283-bdb8-c4f8435f60db" />
   <Project Path="My minecraft clone.vcxproj" Id="8765a9f1-2c8c-4a43-8e8d-cb137753420d" />
 </Solution>
