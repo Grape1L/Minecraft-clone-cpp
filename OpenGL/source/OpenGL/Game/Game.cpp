@@ -9,7 +9,6 @@
 #include <OpenGL/Graphics/VertexArrayObject.h>
 #include <OpenGL/Graphics/ShaderProgram.h>
 #include <OpenGL/Graphics/UniformBuffer.h>
-#include <OpenGL/Entity/EntitySystem.h>
 #include <OpenGL/Camera/Camera.h>
 #include <OpenGL/Object/Object.h>
 
@@ -29,32 +28,6 @@
 
 #include <OpenGL/Blocks/Block.h>
 
-/* 
-WHAT TO ADD: (4/10/2025 3:35am)F
-1. top and bottom textures | done
-2. render only textures player sees
-3. prevent texutres "stacking" on top of each other | done
-4. make better m_camera initialization
-5. make fullscreen option
-i can make pointers to dipslaySize
-make it so that fps doesnt affect movement
-*/
-
-/*
-WHAT TO ADD: (3/04/2026 2:11am)
-1. Add texture atlas and different blocks
-2. Make initial packet receival (allChunks) better, so that it doesnt get mixed with the other data the server sends (IMPORTANT!!!)
-3. Add a whole body skin (later)
-
-14/04.2026 12:02am:
-VERY VERY VERY IMPORTANT!!!!!!!!!!!!
-Make reliable udp packets for actions (not for player)
-*/
-
-/*
-30.04.2026 12:32PM:
-Create a separate graphic rendering thread and make the other stuff follow the tickrate except of course the math and rendering
-*/
 
 struct UniformData {
     Mat4 world;
@@ -68,8 +41,6 @@ struct UniformData {
 Game::Game() {
     m_graphicsEngine = std::make_unique<GraphicsEngine>();
     m_display = std::make_unique<Window>();
-
-    m_entitySystem = std::make_unique<EntitySystem>();
 
     // Server
     m_client = std::make_unique<Client>();
@@ -156,7 +127,7 @@ void Game::onCreate() {
     m_shader->setUniformBufferSlot("UniformData", 0);
 
 
-    // --------------------World generation
+    // World generation
 
     // Single player world generation
      m_worldGen->generateFlatWorld(*m_world);
@@ -178,7 +149,7 @@ void Game::onCreate() {
     //}
     //m_world->allChunks = initialData.value().allChunks;
 
-    // --------------------World generation
+    // World generation
 
 
     // Server
@@ -187,8 +158,6 @@ void Game::onCreate() {
             std::optional<Packet> receivedPacket = std::nullopt;
             receivedPacket = m_client->recvPacket();
             if (receivedPacket == std::nullopt) continue;
-
-            //std::cout << receivedPacket->senderID << "\n";
 
             if (receivedPacket.value().packetType == PacketType::PACKET_PLAYER_STATE) {
                 PlayerData* playerData = std::get_if<PlayerData>(&receivedPacket.value().packet);
@@ -206,7 +175,7 @@ void Game::onCreate() {
                 if (action->actionType == ActionType::BreakBlock || action->actionType == ActionType::PlaceBlock) {
                     BlockAction* blockAction = std::get_if<BlockAction>(&action->data);
 
-                    allChunksType::iterator it = m_world->allChunks.find(blockAction->chunkPos); // oj tutaj mocno zjebalem, trzeba bedzie zrobic tak zeby sendowalo z akcji index chunku z allChunks bo to inaczej sie rozjebie w huj
+                    allChunksType::iterator it = m_world->allChunks.find(blockAction->chunkPos);
                     if (it == m_world->allChunks.end()) {
                         return;
                     }
@@ -216,22 +185,20 @@ void Game::onCreate() {
                         chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType == BlockType::Air;
                     }
                     else if (blockAction->actionType == ActionType::PlaceBlock) {
-
-                        //if (!m_player->isPlayerOccupyingBlock(actionHeader->position, actionHeader->chunkPos)) { // idk mby ill delete it???
-                        chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = blockAction->blockType; // make it so if an object is already there it doesnt place it
+                        chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = blockAction->blockType;
                     }
 
                     
                 }
 
-                else if (action->actionType == ActionType::DamagePlayer) { // later do it so that the server stores all players' health and deciedes when they die
+                else if (action->actionType == ActionType::DamagePlayer) {
                     DamageAction* damageAction = std::get_if<DamageAction>(&action->data);
                     m_player->playerHealth -= damageAction->damage;
 
                     m_graphicsEngine->clear(Vec4(1, 0, 0, 1));
                 }
 
-                m_client->piggyAckPackets.emplace_back(
+                m_client->piggyAckPackets.push(
                     AckPacket{
                         receivedPacket->PiggyAckPacket.id,
                         true
@@ -251,9 +218,6 @@ void Game::onCreate() {
 	stoneBlockTexture.loadTexture("Textures/StoneBlock/stone_block_atlas.png");
     stoneBlockTexture.genTexture();
 
-	rosieBlockTexture.loadTexture("Textures/RozaBlock/roza_block_atlas.png");
-	rosieBlockTexture.genTexture();
-
     playerTexture.loadTexture("Textures/OgorekAtlas/atlas.png");
     playerTexture.genTexture();
     //TEXTURES//
@@ -262,10 +226,6 @@ void Game::onCreate() {
 
 
 void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
-
-    //if (!m_display->isFocused()) {
-    //    return;
-    //}
 
     allChunksType::iterator atChunk = m_world->chunkAt(m_player->camera->getDataXYZ());
     if (atChunk != m_world->allChunks.end()) 
@@ -322,9 +282,6 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
                         case BlockType::Stone:
                             stoneBlockTexture.bindTexture();
                             break;
-                        case BlockType::RosieBlock:
-                            rosieBlockTexture.bindTexture();
-                            break;
                     }
 
                     Vec3 realPos = Vec3(x + chunk->chunkPos.x, y, z + chunk->chunkPos.y);
@@ -346,7 +303,7 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
 
     playerTexture.bindTexture();
 
-    for (const auto& [id, playerData] : this->allPlayersData) { // zrobic tez tak zeby nie renderowalo playerow poza render distance
+    for (const auto& [id, playerData] : this->allPlayersData) {
         Object object;
         Mat4 model = object.modelMatrix(playerData.playerPos, Vec3(playerData.pitch, -playerData.yaw - 90, 0), Vec3(0.4, 0.4, 0.4));
 
@@ -367,17 +324,8 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
 // Rendering Players
 
 
-// drawing UI?
-
-// drawing UI?
-
-
     m_display->present(false);
 }
 
 void Game::onQuit() {
-}
-
-EntitySystem* Game::getEntitySystem() {
-    return m_entitySystem.get();
 }
