@@ -9,6 +9,8 @@
 #include <OpenGL/Client/Misc/ActionHeader.h>
 #include <OpenGL/Client/Misc/Packet.h>
 
+#include <queue>
+
 
 class Client {
 public:
@@ -30,7 +32,7 @@ public:
     std::optional<Packet> recvPacket();
 
 public:
-    std::vector<AckPacket> piggyAckPackets;
+    std::queue<AckPacket> piggyAckPackets;
 
 private:
     sockaddr_in serverReceival{};
