@@ -7,7 +7,7 @@
 #include <optional>
 #include "AckPacket.h"
 
-using PacketVariant = std::variant<Action, PlayerData, char*>;
+using PacketVariant = std::variant<Action, PlayerData>;
 
 struct Packet {
     size_t senderID;
