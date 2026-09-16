@@ -50,7 +50,7 @@ bool Client::connectToServer(const char* ip, const unsigned short port) {
 
 
 void Client::sendPacket(const Packet& packetToSend) {
-    int sendOk = sendto(connectSock, (const char*)&packetToSend, sizeof(packetToSend), 0, (sockaddr*)&server, serverLen);
+    int sendOk = sendto(connectSock, (const char*)&packetToSend, sizeof(Packet), 0, (sockaddr*)&server, serverLen);
 
     if (sendOk == SOCKET_ERROR) {
         std::cerr << "sendto failed: " << WSAGetLastError() << "\n";

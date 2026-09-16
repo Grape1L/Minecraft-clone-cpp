@@ -10,6 +10,7 @@
 #include <OpenGL/Client/Misc/Packet.h>
 
 #include <queue>
+#include <mutex>
 
 
 class Client {
@@ -32,6 +33,7 @@ public:
     std::optional<Packet> recvPacket();
 
 public:
+    std::mutex piggyAckPacketsMTX;
     std::queue<AckPacket> piggyAckPackets;
 
 private:
