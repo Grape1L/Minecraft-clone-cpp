@@ -87,10 +87,8 @@ void Game::run() {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-
         onUpdateInternal(deltaTime);
     }
-    onQuit();
 }
 
 void Game::quit() {
@@ -174,6 +172,7 @@ void Game::onCreate() {
 
                 if (action->actionType == ActionType::BreakBlock || action->actionType == ActionType::PlaceBlock) {
                     BlockAction* blockAction = std::get_if<BlockAction>(&action->data);
+                    if (!blockAction) continue;
 
                     allChunksType::iterator it = m_world->allChunks.find(blockAction->chunkPos);
                     if (it == m_world->allChunks.end()) {
@@ -182,7 +181,7 @@ void Game::onCreate() {
                     Chunk& chunk = *it->second;
 
                     if (blockAction->actionType == ActionType::BreakBlock) {
-                        chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType == BlockType::Air;
+                        chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = BlockType::Air;
                     }
                     else if (blockAction->actionType == ActionType::PlaceBlock) {
                         chunk.blocks[(int)blockAction->position.x][(int)blockAction->position.y][(int)blockAction->position.z].blockType = blockAction->blockType;
@@ -191,17 +190,22 @@ void Game::onCreate() {
 
                 else if (action->actionType == ActionType::DamagePlayer) {
                     DamageAction* damageAction = std::get_if<DamageAction>(&action->data);
+                    if (!damageAction) continue;
+
                     m_player->playerHealth -= damageAction->damage;
 
                     m_graphicsEngine->clear(Vec4(1, 0, 0, 1));
                 }
 
-                m_client->piggyAckPackets.push(
-                    AckPacket{
-                        receivedPacket->PiggyAckPacket.id,
-                        true
-                    }
-                );
+                {
+                    std::lock_guard<std::mutex> lock(m_client->piggyAckPacketsMTX);
+                    m_client->piggyAckPackets.push(
+                        AckPacket{
+                            receivedPacket->PiggyAckPacket.id,
+                            true
+                        }
+                    );
+                }
             }
         }
     });
@@ -226,7 +230,7 @@ void Game::onCreate() {
 void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
 
     allChunksType::iterator atChunk = m_world->chunkAt(m_player->camera->getDataXYZ());
-    if (atChunk != m_world->allChunks.end()) 
+    if (atChunk != m_world->allChunks.end())
     {
         if (chunksToRender.size() == 0 || atChunk->first != chunksToRender[0]->chunkPos)
         {
@@ -239,15 +243,15 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
     Mat4 view;
     m_player->onUpdate(view, deltaTime, m_display->isFocused());
 
-    
+
 
     auto displaySize = m_display->getInnerSize();
-    
+
     Mat4 projection;
 
     projection.setPerspectiveRH((float)(90.0f * PI / 180.0f), (float)displaySize.width / (float)displaySize.height, 0.1f, 1000.0f);
 
-    
+
 
     m_graphicsEngine->clear(Vec4(0, 1, 1, 1));
 
@@ -261,8 +265,8 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
 
     m_graphicsEngine->setShaderProgram(m_shader);
 
-    
-    
+
+
     for (const auto& chunk : chunksToRender) {
 
         for (int x = 0; x < m_world->getChunkSize(); x++) {
@@ -274,12 +278,12 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
                     }
 
                     switch (chunk->blocks[x][y][z].blockType) {
-                        case BlockType::Grass:
-                            grassBlockTexture.bindTexture();
-                            break;
-                        case BlockType::Stone:
-                            stoneBlockTexture.bindTexture();
-                            break;
+                    case BlockType::Grass:
+                        grassBlockTexture.bindTexture();
+                        break;
+                    case BlockType::Stone:
+                        stoneBlockTexture.bindTexture();
+                        break;
                     }
 
                     Vec3 realPos = Vec3(x + chunk->chunkPos.x, y, z + chunk->chunkPos.y);
@@ -297,7 +301,7 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
     }
 
 
-// Rendering Players
+    // Rendering Players
 
     playerTexture.bindTexture();
 
@@ -315,13 +319,9 @@ void Game::onUpdateInternal(std::chrono::duration<float> deltaTime) {
 
         data = { model, projection, view };
         m_uniform->setData(&data);
+    }
 
+    // Rendering Players
 
-// drawing UI?
-
-// drawing UI?
-
-}
-EntitySystem* Game::getEntitySystem() {
-    return m_entitySystem.get();
+    m_display->present(false);
 }

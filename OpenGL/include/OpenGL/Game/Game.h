@@ -33,7 +33,6 @@ public:
 protected:
     virtual void onCreate();
     virtual void onUpdate(float deltaTime) {}
-    virtual void onQuit();
 
 private:
     void onUpdateInternal(std::chrono::duration<float> deltaTime);
