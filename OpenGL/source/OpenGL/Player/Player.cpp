@@ -21,8 +21,8 @@ Player::Player(Client& _client, World& _world, AllPlayersDataType& _allPlayersDa
 
     camera->y = 3;
 
-    camera->x = (world.worldSize * 16) / 2;
-    camera->z = (world.worldSize * 16) / 2;
+    camera->x = world.worldSize / 2;
+    camera->z = world.worldSize / 2;
 
     
     m_inventory->addItemToInventory(ItemStack{ BlockType::Grass, 1 }, 0);
@@ -67,14 +67,18 @@ void Player::onUpdate(Mat4 &view, std::chrono::duration<float> deltaTime, bool f
     };
 
     
-    if (!m_client.piggyAckPackets.empty()) {
+    if (!m_client.piggyAckPackets.empty()) {    
+        std::lock_guard<std::mutex> lock(m_client.piggyAckPacketsMTX);
+
+        AckPacket ackPacket = m_client.piggyAckPackets.front();
+
         m_client.sendPacket(
             Packet{
-                0, PacketType::PACKET_PLAYER_STATE, playerData, m_client.piggyAckPackets.front()
+                0, PacketType::PACKET_PLAYER_STATE, playerData, ackPacket
             }
         );
+
         m_client.piggyAckPackets.pop();
-        
     }
     else {
         m_client.sendPacket(
