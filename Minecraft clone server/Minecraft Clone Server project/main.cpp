@@ -11,8 +11,6 @@
 #include <vector>
 #include <iostream>
 #include <optional>
-#include "Misc/DataHeader.h"
-
 
 
 using Clock = std::chrono::steady_clock;
@@ -44,10 +42,9 @@ int main() {
                 continue;
             }
 
-
             if (receivedPacket->packet.PiggyAckPacket.ack == true) {
 
-                std::lock_guard<std::mutex> lock(server.clientsMutex);
+                //std::lock_guard<std::mutex> lock(server.clientsMutex);
                 for (auto& clientPTR : server.clients) {
                     ServerClient& client = *clientPTR;
 
@@ -64,10 +61,8 @@ int main() {
                                 break;
                             }
                         }
-
                     }
                 }
-
             }
 
             receivedPacket->packet.PiggyAckPacket = {};
@@ -104,7 +99,7 @@ int main() {
 
     // sendThread
     while (true) {
-        std::lock_guard<std::mutex> lock(server.clientsMutex);
+        //std::lock_guard<std::mutex> lock(server.clientsMutex);
         for (auto& clientPTR : server.clients) {
             ServerClient& client = *clientPTR;
 

@@ -3,13 +3,13 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <optional>
-#include "../Misc/ActionHeader.h"
-#include "../Misc/PlayerData.h"
+#include <OpenGL/Client/Misc/ActionHeader.h>
+#include <OpenGL/Client/Misc/PlayerData.h>
 #include <string>
 #include <vector>
 #include <OpenGL/World/Chunk.h>
 #include "Misc/ReceivedPacket.h"
-#include "../Misc/Packet.h"
+#include <OpenGL/Client/Misc/Packet.h>
 #include <deque>
 #include <mutex>
 #include <memory>

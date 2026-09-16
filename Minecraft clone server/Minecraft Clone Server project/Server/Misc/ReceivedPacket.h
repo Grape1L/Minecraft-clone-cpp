@@ -1,10 +1,10 @@
 #pragma once
 
 #include <variant>
-#include "../../Misc/ActionHeader.h"
-#include "../../Misc/PlayerData.h"
+#include <OpenGL/Client/Misc/ActionHeader.h>
+#include <OpenGL/Client/Misc/PlayerData.h>
 #include <ws2tcpip.h>
-#include "../../Misc/Packet.h"
+#include <OpenGL/Client/Misc/Packet.h>
 
 
 struct ReceivedPacket {

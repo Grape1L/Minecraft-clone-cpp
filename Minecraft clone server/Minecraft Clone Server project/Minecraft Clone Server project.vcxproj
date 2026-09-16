@@ -112,11 +112,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\OpenGL\include;$(ProjectDir)..\..\OpenGL\glad\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGL\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);Ws2_32.lib</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -141,19 +142,15 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Misc\AckPacket.h" />
-    <ClInclude Include="Misc\ActionHeader.h" />
-    <ClInclude Include="Misc\DataHeader.h" />
-    <ClInclude Include="Misc\InitialData.h" />
-    <ClInclude Include="Misc\Packet.h" />
-    <ClInclude Include="Misc\PacketTypes.h" />
-    <ClInclude Include="Misc\PlayerData.h" />
     <ClInclude Include="Server\Deserializer\Deserializer.h" />
     <ClInclude Include="Server\Misc\ReceivedPacket.h" />
     <ClInclude Include="Server\Serializer\Serializer.h" />
     <ClInclude Include="Server\Server.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\OpenGL\source\OpenGL\World\Chunk.cpp" />
+    <ClCompile Include="..\..\OpenGL\source\OpenGL\World\World.cpp" />
+    <ClCompile Include="..\..\OpenGL\source\OpenGL\World\WorldGen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server\Server.cpp" />
   </ItemGroup>

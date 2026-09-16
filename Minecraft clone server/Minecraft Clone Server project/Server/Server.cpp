@@ -1,7 +1,7 @@
 #include "Server.h"
 #include <iostream>
 #include <cstring>
-#include "../Misc/Packet.h"
+#include <OpenGL/Client/Misc/Packet.h>
 #include <OpenGL/Client/Misc/InitChunk.h>
 #include <OpenGL/Client/Misc/Command.h>
 
@@ -65,18 +65,19 @@ std::optional<ReceivedPacket> Server::receive() {
         }
     }
 
+    Packet packet{};
+    memcpy(&packet, buffer, sizeof(Packet));
 
-    Packet packet;
-    memcpy(&packet, buffer, sizeof(packet));
-
+    // Temporary
     for (const auto& cptr : clients) {
         std::lock_guard<std::mutex> lock(clientsMutex);
 
         if (cptr->client.sin_addr.S_un.S_addr == client.sin_addr.S_un.S_addr &&
             cptr->client.sin_port == client.sin_port) {
                 packet.senderID = cptr->clientID;
-            }
+        }
     }
+    // Temporary
 
     return ReceivedPacket{client, packet};
 }
